@@ -10,13 +10,13 @@ import java.net.URI;
 
 public class Application {
 
-    public static final String BASE_URI = "http://localhost:8080/";
+    public static final URI BASE_URI = URI.create("http://localhost:8080");
 
     public static void main(String[] args) {
-        final ResourceConfig config = new ResourceConfig();
+        ResourceConfig config = new ResourceConfig();
         config.register(HealthResource.class);
 
-        final HttpServer httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), config);
+         HttpServer httpServer = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, config);
         try {
             System.in.read();
         } catch (IOException e) {

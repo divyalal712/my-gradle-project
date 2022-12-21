@@ -1,17 +1,14 @@
 package no.training.project.resources;
 
-import org.glassfish.grizzly.http.util.HttpStatus;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("/")
 public class HealthResource {
     @GET
-    @Path("/health")
-    public HttpStatus getHealth(){
-        return HttpStatus.OK_200;
-
+    @Path("health")
+    public String getHealth(){
+        return "Healthy";
     }
-
 }
