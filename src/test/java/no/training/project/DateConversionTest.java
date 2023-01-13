@@ -44,10 +44,6 @@ public class DateConversionTest {
             Assertions.assertEquals("Unexpected error while calculating sol :", e.getMessage());
         }
     }
-
-
-
-
 }
 
 
