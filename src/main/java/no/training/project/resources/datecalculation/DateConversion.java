@@ -18,7 +18,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 @Path("/date-conversion")
 public class DateConversion {
-
     private static final Logger log = LoggerFactory.getLogger(DateConversion.class);
 
     @GET
