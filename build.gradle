@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin:'application'
 
-mainClassName = "Application"
+mainClassName = "no.training.project.Application"
 
 repositories {
     mavenCentral()
@@ -18,15 +18,13 @@ dependencies {
     implementation 'ch.qos.logback:logback-core: 1.0.9'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-       // testRuntimeOnly 'junit-jupiter-engine:5.8.1'
-
 
     test {
         useJUnitPlatform()
     }
-}
+  }
 
-run{
+    run{
     standardInput = System.in
-}
+        }
 
