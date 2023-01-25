@@ -1,6 +1,6 @@
 package no.training.project.model;
 
-public class MartianWeatherModelClass {
+public class Sole {
     private int id;
     private String terrestrial_date;
     private String sol;
@@ -19,27 +19,6 @@ public class MartianWeatherModelClass {
     private String local_uv_irradiance_index;
     private String min_gts_temp;
     private String max_gts_temp;
-
-    public MartianWeatherModelClass(int id, String terrestrial_date, String sol, String ls, String season, String min_temp, String max_temp, String pressure, String pressure_string, String abs_humidity, String wind_speed, String wind_direction, String atmo_opacity, String sunrise, String sunset, String local_uv_irradiance_index, String min_gts_temp, String max_gts_temp) {
-        this.id = id;
-        this.terrestrial_date = terrestrial_date;
-        this.sol = sol;
-        this.ls = ls;
-        this.season = season;
-        this.min_temp = min_temp;
-        this.max_temp = max_temp;
-        this.pressure = pressure;
-        this.pressure_string = pressure_string;
-        this.abs_humidity = abs_humidity;
-        this.wind_speed = wind_speed;
-        this.wind_direction = wind_direction;
-        this.atmo_opacity = atmo_opacity;
-        this.sunrise = sunrise;
-        this.sunset = sunset;
-        this.local_uv_irradiance_index = local_uv_irradiance_index;
-        this.min_gts_temp = min_gts_temp;
-        this.max_gts_temp = max_gts_temp;
-    }
 
     public int getId() {
         return id;

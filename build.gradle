@@ -23,7 +23,6 @@ dependencies {
         useJUnitPlatform()
     }
   }
-
     run{
     standardInput = System.in
         }

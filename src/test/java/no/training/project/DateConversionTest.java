@@ -1,6 +1,6 @@
 package no.training.project;
 
-import no.training.project.resources.datecalculation.DateConversion;
+import no.training.project.resource.datecalculation.DateConversion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

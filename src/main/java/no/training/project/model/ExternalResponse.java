@@ -2,7 +2,7 @@ package no.training.project.model;
 
 import java.util.List;
 
-public class Response {
+public class ExternalResponse {
     private Description descriptions;
     private List<Sole> soles;
 
@@ -20,5 +20,13 @@ public class Response {
 
     public void setSoles(List<Sole> soles) {
         this.soles = soles;
+    }
+
+    @Override
+    public String toString() {
+        return "ExternalResponse{" +
+                "descriptions=" + descriptions +
+                ", soles=" + soles +
+                '}';
     }
 }
