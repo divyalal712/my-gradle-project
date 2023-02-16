@@ -9,13 +9,11 @@ import no.training.project.resource.martianweather.MartianWeather;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,10 +23,30 @@ public class MartianWeatherTest {
 
     @Mock
     private HttpClient defaultHttpClient;
+    private MartianWeather date;
 
     @Test
     public void getMartianWeatherSuccessTest() throws IOException, InterruptedException {
 
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse response = mock(HttpResponse.class);
+
+        when(response.statusCode()).thenReturn(200);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExternalResponse externalRep = getExternalResponse();
+        String externalResponseString = objectMapper.writeValueAsString(externalRep);
+        when(response.body()).thenReturn(externalResponseString);
+
+
+        MartianWeather martian = new MartianWeather(httpClient);
+
+        when(httpClient.send(any(), any())).thenReturn(response);
+        ExternalResponse martianWeather = martian.getMartianWeather();
+        Assertions.assertNotNull(martianWeather);
+    }
+
+    private static ExternalResponse getExternalResponse() {
         ExternalResponse externalRep = new ExternalResponse();
         Description description = new Description();
         description.setDisclaimer_en("35");
@@ -60,22 +78,7 @@ public class MartianWeatherTest {
         List<Sole> list = new ArrayList();
         list.add(sole);
         externalRep.setSoles(list);
-
-        HttpClient httpClient = mock(HttpClient.class);
-        HttpResponse response = mock(HttpResponse.class);
-
-        when(response.statusCode()).thenReturn(200);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String externalResponseString = objectMapper.writeValueAsString(externalRep);
-        when(response.body()).thenReturn(externalResponseString);
-
-
-        MartianWeather martian = new MartianWeather(httpClient);
-
-        when(httpClient.send(any(), any())).thenReturn(response);
-        ExternalResponse martianWeather = martian.getMartianWeather();
-        Assertions.assertNotNull(martianWeather);
+        return externalRep;
     }
 
     @Test
@@ -109,7 +112,7 @@ public class MartianWeatherTest {
             when(httpClient.send(any(), any())).thenReturn(response);
             martian.getMartianWeather();
         } catch (ServiceException exception) {
-            Assertions.assertEquals("Internal Server error found", exception.getErrorMessage());
+            Assertions.assertEquals("Internal error found", exception.getErrorMessage());
             Assertions.assertEquals(500, exception.getStatusCode());
         }
     }
@@ -126,6 +129,33 @@ public class MartianWeatherTest {
             martian.getMartianWeather();
         } catch (RuntimeException exception) {
             Assertions.assertEquals("Found Runtime Exception", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void soleBasedOnDateTest() throws IOException, InterruptedException {
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse response = mock(HttpResponse.class);
+        when(httpClient.send(any(), any())).thenReturn(response);
+        when(response.statusCode()).thenReturn(200);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExternalResponse externalRep = getExternalResponse();
+        String externalResponseString = objectMapper.writeValueAsString(externalRep);
+        when(response.body()).thenReturn(externalResponseString);
+        MartianWeather martian = new MartianWeather();
+        Sole sole = martian.soleBasedOnDate("2022-06-27");
+        Assertions.assertNotNull(sole);
+        Assertions.assertEquals(sole.getTerrestrial_date(), "2022-06-27");
+    }
+
+    @Test
+    public void wrongDateFormat() throws IOException, InterruptedException {
+
+        try {
+            MartianWeather martian = new MartianWeather();
+            Sole sole = martian.soleBasedOnDate("09-06-2022");
+        } catch (RuntimeException exception) {
+            Assertions.assertEquals("Date given is not in proper format", exception.getMessage());
         }
     }
 }

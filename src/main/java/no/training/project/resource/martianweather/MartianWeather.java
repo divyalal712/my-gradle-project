@@ -2,19 +2,23 @@ package no.training.project.resource.martianweather;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import no.training.project.Mapper.NasaMapper;
 import no.training.project.exception.ServiceException;
 import no.training.project.model.ExternalResponse;
+import no.training.project.model.Sole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Path("/martian-weather")
 public class MartianWeather {
@@ -23,6 +27,7 @@ public class MartianWeather {
 
     private HttpClient httpClient;
 
+    //used for test cases
     public MartianWeather(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -38,10 +43,10 @@ public class MartianWeather {
 
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(MARS_NASA_URL)).method("GET", HttpRequest.BodyPublishers.noBody()).build();// send requests and retrieve their responses.
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());//convert the response body bytes into a String
-            if(response.statusCode()==200){
+            if(response.statusCode() == 200){
                 NasaMapper nasaMapper = new NasaMapper();
                 ExternalResponse externalResponse = nasaMapper.getNasaObject(response);
-                LOG.info("Returns the external response {}", externalResponse);
+                LOG.info("Returns the external response: {}", externalResponse !=null);
                 return externalResponse;
             }
             else {
@@ -50,5 +55,26 @@ public class MartianWeather {
         } catch (Exception e) {
            throw e;
         }
+    }
+    @GET
+    @Path("/{date}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Sole soleBasedOnDate(@PathParam("date") String date) throws IOException, InterruptedException {
+        LOG.info("Given date format is {}", date);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false);
+        try {
+            sdf.parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException("Date given is not in proper format");
+        }
+        ExternalResponse externalResponse = getMartianWeather();
+        List<Sole> list = externalResponse.getSoles();
+        for (Sole sole : list) {
+            if (sole.getTerrestrial_date().equals(date)) {
+                return sole;
+            }
+        }
+        return null;
     }
 }
