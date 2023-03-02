@@ -9,17 +9,18 @@ import org.slf4j.LoggerFactory;
 import java.net.http.HttpResponse;
 
 public class NasaMapper {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger LOG = LoggerFactory.getLogger(NasaMapper.class);
 
     public ExternalResponse getNasaObject(HttpResponse<String> response) {
-        ObjectMapper objectMapper = new ObjectMapper();
         ExternalResponse resp;
         try {
             resp = objectMapper.readValue(response.body(), ExternalResponse.class);
         } catch (JsonProcessingException e) {
+            LOG.error("Error in parsing Json to object : {}", e.getMessage());
             throw new RuntimeException(e);
         }
-        LOG.info("The response is converted to ExternalResponse");
+        LOG.debug("The response is converted to ExternalResponse and is {} ",resp);
         return resp;
     }
 }

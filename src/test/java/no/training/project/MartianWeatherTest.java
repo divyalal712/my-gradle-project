@@ -46,41 +46,11 @@ public class MartianWeatherTest {
         Assertions.assertNotNull(martianWeather);
     }
 
-    private static ExternalResponse getExternalResponse() {
-        ExternalResponse externalRep = new ExternalResponse();
-        Description description = new Description();
-        description.setDisclaimer_en("35");
-        description.setDisclaimer_es("45");
-        description.setSeason_desc_en("winter");
-        description.setSeason_desc_es("spring");
-        externalRep.setDescriptions(description);
-
-        Sole sole = new Sole();
-        sole.setId(3338);
-        sole.setTerrestrial_date("2022-06-27");
-        sole.setSol("3516");
-        sole.setLs("254");
-        sole.setSeason("Month 9");
-        sole.setMin_temp("-66");
-        sole.setMax_temp("-8");
-        sole.setPressure("875");
-        sole.setPressure_string("Higher");
-        sole.setAbs_humidity("--");
-        sole.setWind_speed("--");
-        sole.setWind_direction("--");
-        sole.setAtmo_opacity("Sunny");
-        sole.setSunrise("05:48");
-        sole.setSunset("18:05");
-        sole.setLocal_uv_irradiance_index("High");
-        sole.setMin_gts_temp("-79");
-        sole.setMax_gts_temp("8");
-
-        List<Sole> list = new ArrayList();
-        list.add(sole);
-        externalRep.setSoles(list);
-        return externalRep;
+    private static ExternalResponse getExternalResponse() throws IOException {
+        String response = new String(MartianWeatherTest.class.getResourceAsStream("/mock-data/success-response.json").readAllBytes());
+        ExternalResponse responseAsObject = new ObjectMapper().readValue(response, ExternalResponse.class);
+        return responseAsObject;
     }
-
     @Test
     public void getMartianWeatherNotFoundTest() throws IOException, InterruptedException {
         try {
@@ -145,7 +115,8 @@ public class MartianWeatherTest {
         MartianWeather martian = new MartianWeather();
         Sole sole = martian.soleBasedOnDate("2022-06-27");
         Assertions.assertNotNull(sole);
-        Assertions.assertEquals(sole.getTerrestrial_date(), "2022-06-27");
+        Assertions.assertEquals(sole.terrestrialDate(),"2022-06-27");
+        //Assertions.assertEquals(sole.getTerrestrial_date(), "2022-06-27");
     }
 
     @Test

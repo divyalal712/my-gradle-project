@@ -9,6 +9,7 @@ import no.training.project.Mapper.NasaMapper;
 import no.training.project.exception.ServiceException;
 import no.training.project.model.ExternalResponse;
 import no.training.project.model.Sole;
+import org.glassfish.grizzly.http.util.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -24,7 +25,6 @@ import java.util.List;
 public class MartianWeather {
     private static final String MARS_NASA_URL = "https://mars.nasa.gov/rss/api/?feed=weather&feedtype=json&ver=1.0&category=msl";
     private static final Logger LOG = LoggerFactory.getLogger(MartianWeather.class);
-
     private HttpClient httpClient;
 
     //used for test cases
@@ -41,18 +41,22 @@ public class MartianWeather {
     public ExternalResponse getMartianWeather() throws IOException, InterruptedException {
         try {
 
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(MARS_NASA_URL)).method("GET", HttpRequest.BodyPublishers.noBody()).build();// send requests and retrieve their responses.
+            HttpRequest request = HttpRequest.newBuilder()
+                                  .uri(URI.create(MARS_NASA_URL))
+                                  .method("GET", HttpRequest.BodyPublishers.noBody())
+                                  .build();// send requests and retrieve their responses.
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());//convert the response body bytes into a String
             if(response.statusCode() == 200){
                 NasaMapper nasaMapper = new NasaMapper();
                 ExternalResponse externalResponse = nasaMapper.getNasaObject(response);
-                LOG.info("Returns the external response: {}", externalResponse !=null);
+                LOG.debug("Returns the external response: {}", externalResponse !=null);
                 return externalResponse;
             }
             else {
                throw new ServiceException("Internal error found", response.statusCode());
             }
         } catch (Exception e) {
+            LOG.error("Exception found while getting Martian Weather", e);
            throw e;
         }
     }
@@ -66,12 +70,13 @@ public class MartianWeather {
         try {
             sdf.parse(date);
         } catch (ParseException e) {
-            throw new RuntimeException("Date given is not in proper format");
+            LOG.error("Error in parsing date", e);
+            throw new ServiceException("Date given is not in proper format", HttpStatus.BAD_REQUEST_400.getStatusCode());
         }
         ExternalResponse externalResponse = getMartianWeather();
-        List<Sole> list = externalResponse.getSoles();
+        List<Sole> list = externalResponse.soles();
         for (Sole sole : list) {
-            if (sole.getTerrestrial_date().equals(date)) {
+            if(sole.terrestrialDate().equals(date)){
                 return sole;
             }
         }
