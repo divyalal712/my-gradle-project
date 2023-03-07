@@ -1,6 +1,6 @@
 package no.training.project;
 
-import no.training.project.resources.health.HealthResource;
+import no.training.project.resource.health.HealthResource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
