@@ -3,6 +3,7 @@ package no.training.project;
 import no.training.project.resource.datecalculation.DateConversion;
 import no.training.project.resource.health.HealthResource;
 import no.training.project.resource.martianweather.MartianWeather;
+import no.training.project.resource.version.Version;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -18,6 +19,7 @@ public class Application {
         config.register(HealthResource.class);
         config.register(DateConversion.class);
         config.register(MartianWeather.class);
+        config.register(Version.class);
         HttpServer httpServer = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, config);
         try {
             Thread.currentThread().join();
